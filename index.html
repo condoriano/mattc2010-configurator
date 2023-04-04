@@ -1,0 +1,180 @@
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MATT_C_2010 Конфігуратор</title>
+    <link href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/vue@next"></script>
+
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .commands-code {
+            font-family: monospace;
+            background-color: aliceblue;
+            padding: 20px;
+            color: olive;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="container container-fluid">
+        <div class="row mt-4 mb-4">
+            <div class="col">
+                <h2>Конфігуратор дисплею панелі приладів MATT_C_2010</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="mb-2">Команди для отримання поточної конфігурації:</div>
+                <div class="commands-code">
+                    >772:672<br>
+                    :ECEC:01:01<br>
+                    222100<br>
+                    220200<br>
+                </div>
+            </div> <!-- .row -->
+        </div>
+        <div class="row"><div class="col"><hr></div></div>
+        <div class="row mt-3">
+            <div class="col-6">
+                <div class="mb-3">
+                    <label for="zone2100" class="form-label">Зона 2100</label>
+                    <input id="zone2100" type="text" class="form-control" pattern="[\x00-\x7F]+" maxlength="14" v-model="zone2100">
+                </div>
+                <div class="mb-3">
+                    <label for="zone0200" class="form-label">Зона 0200</label>
+                    <input id="zone0200" type="text" class="form-control" pattern="[\x00-\x7F]+" maxlength="6" v-model="zone0200">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="mb-3">
+                    <label for="zone2100result" class="form-label">Результат</label>
+                    <input id="zone2100result" readonly disabled type="text" class="form-control" :value="params2100resultStr">
+                </div>
+                <div class="mb-3">
+                    <label for="zone0200result" class="form-label">Результат</label>
+                    <input id="zone0200result" readonly disabled type="text" class="form-control" :value="params0200resultStr">
+                </div>
+            </div>
+        </div> <!-- .row -->
+        <div v-if="isResultReady" class="row">
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p1" v-model="zone2100p[0][5]">
+                    <label class="form-check-label" for="zone2100p1">
+                        Медіаінфо з ГП
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p2" v-model="zone2100p[0][4]">
+                    <label class="form-check-label" for="zone2100p2">
+                        Покажчик передачі
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p3" v-model="zone2100p[0][3]">
+                    <label class="form-check-label" for="zone2100p3">
+                        Круїз-контроль та лімітер
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p4" v-model="zone2100p[1][7]">
+                    <label class="form-check-label" for="zone2100p4">
+                        Навігація з ГП
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p5" v-model="zone2100p[1][6]">
+                    <label class="form-check-label" for="zone2100p5">
+                        Рівень олії
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p6" v-model="zone2100p[1][5]">
+                    <label class="form-check-label" for="zone2100p6">
+                        Дані поїздок (trip)
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p7" v-model="zone2100p[1][4]">
+                    <label class="form-check-label" for="zone2100p7">
+                        Пробіг у нижньому рядку
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p8" v-model="zone2100p[1][3]">
+                    <label class="form-check-label" for="zone2100p8">
+                        Екран із температурою
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p9" v-model="zone2100p[3][4]">
+                    <label class="form-check-label" for="zone2100p9">
+                        Екран часу
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone2100p10" v-model="zone2100p[3][2]">
+                    <label class="form-check-label" for="zone2100p10">
+                        Наявність кнопки Start
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone0200p1" :true-value="false" :false-value="true" v-model="zone0200p[0][5]">
+                    <label class="form-check-label" for="zone0200p1">
+                        Миттєва витрата та запас ходу в нижньому рядку
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="zone0200p2" v-model="zone0200p[0][1]">
+                    <label class="form-check-label" for="zone0200p2">
+                        Екран поточної швидкості
+                    </label>
+                </div>
+
+
+
+            </div>
+        </div><!-- .row -->
+        <div class="row">
+            <div class="col">
+                <hr>
+            </div>
+        </div>
+        <div v-if="isResultReady" class="row mt-4">
+            <div class="col-6">
+                <div class="mb-2">Команди для телекодування згідно обраних параметрів:</div>
+                <div class="commands-code">
+                    >772:672<br>
+                    :ECEC:03:03<br>
+                    2E{{ params2100resultStr }}<br>
+                    2E{{ params0200resultStr }}<br>
+                    2E2901FD000000010101<br>
+                    1001<br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./app.js"></script>
+</body>
+</html>
