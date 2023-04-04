@@ -40,10 +40,11 @@ function intArrayToBitParams(data) {
 const Configurator = {
   data() {
     return {
-      zone2100: 'EEE47440003000',
-      zone0200: 'FE8000',
+      zone2100: '', // EEE47440003000
+      zone0200: '', // FE8000
 
-      zone2100p: [], zone0200p: [],
+      zone2100p: [],
+      zone0200p: [],
     }
   },
   computed: {
